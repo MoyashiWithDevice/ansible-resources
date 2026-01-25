@@ -3,6 +3,8 @@ kind: Job
 metadata:
   name: ansible-setup-job
   namespace: flux-system
+  labels:
+    build-id: "20260125-01"
 spec:
   template:
     spec:
