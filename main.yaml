@@ -1,21 +1,32 @@
-- name: Connectivity Test and Initial Setup
-  hosts: all
-  gather_facts: yes  # 相手のOS情報などを取得する
+- name: Setup Apache on Ubuntu
+  hosts: proxmox_vms
+  become: yes  # root権限で実行
+  gather_facts: yes
 
   tasks:
-    - name: Ping the host
-      ping:
-
-    - name: Show OS distribution
-      debug:
-        msg: "Connecting to {{ ansible_distribution }} {{ ansible_distribution_version }}"
-
-    - name: Update apt cache (for Ubuntu/Debian)
+    - name: Ensure Apache is installed
       apt:
+        name: apache2
+        state: present
         update_cache: yes
       when: ansible_os_family == "Debian"
 
-    - name: Update dnf cache (for RedHat/CentOS)
-      dnf:
-        makecache: yes
-      when: ansible_os_family == "RedHat"
+    - name: Ensure Apache is started and enabled
+      service:
+        name: apache2
+        state: started
+        enabled: yes
+      when: ansible_os_family == "Debian"
+
+    - name: Create a simple index.html
+      copy:
+        content: |
+          <html>
+          <body>
+          <h1>Managed by Ansible & Terraform</h1>
+          <p>Hostname: {{ ansible_hostname }}</p>
+          <p>IP Address: {{ ansible_default_ipv4.address }}</p>
+          </body>
+          </html>
+        dest: /var/www/html/index.html
+        mode: '0644'
