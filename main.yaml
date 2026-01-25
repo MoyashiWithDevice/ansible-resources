@@ -1,0 +1,21 @@
+- name: Connectivity Test and Initial Setup
+  hosts: all
+  gather_facts: yes  # 相手のOS情報などを取得する
+
+  tasks:
+    - name: Ping the host
+      ping:
+
+    - name: Show OS distribution
+      debug:
+        msg: "Connecting to {{ ansible_distribution }} {{ ansible_distribution_version }}"
+
+    - name: Update apt cache (for Ubuntu/Debian)
+      apt:
+        update_cache: yes
+      when: ansible_os_family == "Debian"
+
+    - name: Update dnf cache (for RedHat/CentOS)
+      dnf:
+        makecache: yes
+      when: ansible_os_family == "RedHat"
