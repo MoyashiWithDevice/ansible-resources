@@ -1,5 +1,5 @@
 - name: Setup Apache on Ubuntu
-  hosts: proxmox_vms
+  hosts: test-server
   become: yes  # root権限で実行
   gather_facts: yes
 
