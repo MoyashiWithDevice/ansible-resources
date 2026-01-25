@@ -1,0 +1,43 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ansible-setup-job
+  namespace: flux-system
+spec:
+  template:
+    spec:
+      serviceAccountName: ansible-sa
+      # 1. 起動時に最新の Playbook を Git から持ってくる
+      initContainers:
+      - name: git-sync
+        image: alpine/git
+        command: ["git", "clone", "https://github.com/MoyashiWithDevice/ansible-resources.git", "/ansible"]
+        volumeMounts:
+        - name: playbook-storage
+          mountPath: /ansible
+      
+      containers:
+      - name: ansible
+        image: cytopia/ansible:latest
+        env:
+        - name: ANSIBLE_HOST_KEY_CHECKING
+          value: "False" # 初回接続エラーを防ぐ
+        volumeMounts:
+        - name: ssh-key
+          mountPath: "/root/.ssh"
+          readOnly: true
+        - name: playbook-storage
+          mountPath: "/ansible"
+        workingDir: "/ansible"
+        command: ["ansible-playbook", "-i", "inventory.ini", "main.yaml", "--private-key", "/root/.ssh/private_key"]
+
+      volumes:
+      - name: ssh-key
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: "ansible-vault-spc"
+      - name: playbook-storage
+        emptyDir: {} # initContainer から container へ受け渡す一時領域
+      restartPolicy: Never
