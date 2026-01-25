@@ -20,7 +20,7 @@ spec:
       
       containers:
       - name: ansible
-        image: cytopia/ansible:latest
+        image: bababa2547/ansible-ssh:latest
         env:
         - name: ANSIBLE_HOST_KEY_CHECKING
           value: "False" # 初回接続エラーを防ぐ
