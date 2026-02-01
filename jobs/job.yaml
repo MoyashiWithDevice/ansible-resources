@@ -26,9 +26,9 @@ spec:
           value: "False" # 初回接続エラーを防ぐ
         volumeMounts:
         - name: ssh-dir
-          mountPath: "/root/.ssh"
+          mountPath: "/home/ansible/.ssh"
         - name: ssh-key
-          mountPath: "/root/.ssh/private_key"
+          mountPath: "/home/ansible/.ssh/private_key"
           subPath: "private_key"
           readOnly: true
         - name: playbook-storage
