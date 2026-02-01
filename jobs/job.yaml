@@ -25,8 +25,11 @@ spec:
         - name: ANSIBLE_HOST_KEY_CHECKING
           value: "False" # 初回接続エラーを防ぐ
         volumeMounts:
-        - name: ssh-key
+        - name: ssh-dir
           mountPath: "/root/.ssh"
+        - name: ssh-key
+          mountPath: "/root/.ssh/private_key"
+          subPath: "private_key"
           readOnly: true
         - name: playbook-storage
           mountPath: "/ansible"
@@ -34,6 +37,8 @@ spec:
         command: ["ansible-playbook", "-i", "inventory.ini", "main.yaml", "--private-key", "/root/.ssh/private_key"]
 
       volumes:
+      - name: ssh-dir
+        emptyDir: {}
       - name: ssh-key
         csi:
           driver: secrets-store.csi.k8s.io
