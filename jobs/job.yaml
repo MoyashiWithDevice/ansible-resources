@@ -40,8 +40,10 @@ spec:
           runAsUser: 1500
           runAsGroup: 1500
         env:
-        - name: home
+        - name: HOME
           value: /home/ansible
+        - name: ANSIBLE_LOCAL_TEMP
+          value: "/tmp/ansible"
         - name: ANSIBLE_HOST_KEY_CHECKING
           value: "False"
         volumeMounts:
