@@ -9,15 +9,22 @@ spec:
   template:
     spec:
       serviceAccountName: ansible-sa
-      # 1. 起動時に最新の Playbook を Git から持ってくる
       initContainers:
       - name: fix-perms
         image: busybox
-        command: ["sh", "-c", "chown 1500:1500 /mnt/private_key && chmod 400 /mnt/private_key"]
+        command:
+          - sh
+          - -c
+          - |
+            cp /secrets/private_key /ssh/private_key && \
+            chown 1500:1500 /ssh/private_key && \
+            chmod 400 /ssh/private_key
         volumeMounts:
         - name: ssh-key
-          mountPath: /mnt/private_key
-          subPath: private_key
+          mountPath: /secrets
+          readOnly: true
+        - name: ssh-dir
+          mountPath: /ssh
 
       - name: git-sync
         image: alpine/git
@@ -25,7 +32,7 @@ spec:
         volumeMounts:
         - name: playbook-storage
           mountPath: /ansible
-      
+
       containers:
       - name: ansible
         image: bababa2547/ansible-ssh:latest
@@ -34,17 +41,14 @@ spec:
           runAsGroup: 1500
         env:
         - name: ANSIBLE_HOST_KEY_CHECKING
-          value: "False" # 初回接続エラーを防ぐ
+          value: "False"
         volumeMounts:
-        - name: ssh-key
-          mountPath: "/home/ansible/.ssh/private_key"
-          subPath: "private_key"
-          readOnly: true
+        - name: ssh-dir
+          mountPath: /home/ansible/.ssh
         - name: playbook-storage
-          mountPath: "/ansible"
-        workingDir: "/ansible"
+          mountPath: /ansible
+        workingDir: /ansible
         command: ["ansible-playbook", "-i", "inventory.ini", "main.yaml", "--private-key", "/home/ansible/.ssh/private_key"]
-        #command: ["sh", "-c", "sleep 3600"]
 
       volumes:
       - name: ssh-key
@@ -53,6 +57,8 @@ spec:
           readOnly: true
           volumeAttributes:
             secretProviderClass: "ansible-vault-spc"
+      - name: ssh-dir
+        emptyDir: {}
       - name: playbook-storage
-        emptyDir: {} # initContainer から container へ受け渡す一時領域
+        emptyDir: {}
       restartPolicy: Never
