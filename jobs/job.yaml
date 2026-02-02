@@ -40,6 +40,8 @@ spec:
           runAsUser: 1500
           runAsGroup: 1500
         env:
+        - name: home
+          value: /home/ansible
         - name: ANSIBLE_HOST_KEY_CHECKING
           value: "False"
         volumeMounts:
