@@ -10,16 +10,19 @@ spec:
     spec:
       serviceAccountName: ansible-sa
       initContainers:
-      - name: fix-perms
+      - name: set-perms
         image: busybox
         command:
           - sh
           - -c
           - |
+            mkdir -p /home/ansible/.ansible && chown -R 1500:1500 /home/ansible/.ansible && \
             cp /secrets/private_key /ssh/private_key && \
             chown 1500:1500 /ssh/private_key && \
             chmod 400 /ssh/private_key
         volumeMounts:
+        - name: home-dir
+          mountPath: /home/ansible
         - name: ssh-key
           mountPath: /secrets
           readOnly: true
@@ -47,6 +50,8 @@ spec:
         - name: ANSIBLE_HOST_KEY_CHECKING
           value: "False"
         volumeMounts:
+        - name: ansible-tmp
+          mountPath: /home/ansible/.ansible
         - name: ssh-dir
           mountPath: /home/ansible/.ssh
         - name: playbook-storage
@@ -64,5 +69,7 @@ spec:
       - name: ssh-dir
         emptyDir: {}
       - name: playbook-storage
+        emptyDir: {}
+      - name: ansible-tmp
         emptyDir: {}
       restartPolicy: Never
