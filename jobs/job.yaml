@@ -39,9 +39,6 @@ spec:
       containers:
       - name: ansible
         image: bababa2547/ansible-ssh:latest
-        securityContext:
-          runAsUser: 1500
-          runAsGroup: 1500
         env:
         - name: HOME
           value: /home/ansible
