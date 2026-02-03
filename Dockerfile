@@ -11,7 +11,7 @@ RUN apk add --no-cache \
     shadow  # useraddで必要
 
 # ansible ユーザー作成
-RUN useradd -m -u 1500 -s /bin/sh ansible
+RUN addgroup -g 1500 ansible && adduser -D -u 1500 -G ansible ansible
 
 # ansible ユーザーの .ssh ディレクトリ準備
 RUN mkdir -p /home/ansible/.ssh && \
