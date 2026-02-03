@@ -59,6 +59,7 @@ spec:
         workingDir: /ansible
         command: ["ansible-playbook", "-i", "inventory.ini", "main.yaml", "--private-key", "/home/ansible/.ssh/private_key"]
 
+        
       volumes:
       - name: ssh-key
         csi:
