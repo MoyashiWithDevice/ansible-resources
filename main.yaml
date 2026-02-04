@@ -32,7 +32,7 @@
 #         mode: '0644'
 
 - hosts: all
-  become: false
+  become: true
   tasks:
     - name: install qemu guest agent
       package:
