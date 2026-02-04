@@ -54,8 +54,8 @@ spec:
         - name: playbook-storage
           mountPath: /ansible
         workingDir: /ansible
-        command: ["ansible-playbook", "-i", "inventory.ini", "main.yaml", "--private-key", "/home/ansible/.ssh/private_key"]
-        #command: ["sleep", "3600"]
+        #command: ["ansible-playbook", "-i", "inventory.ini", "main.yaml", "--private-key", "/home/ansible/.ssh/private_key"]
+        command: ["sleep", "3600"]
 
       volumes:
       - name: ssh-key

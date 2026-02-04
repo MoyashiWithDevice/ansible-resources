@@ -31,16 +31,22 @@
 #         dest: /var/www/html/index.html
 #         mode: '0644'
 
+# - hosts: all
+#   become: true
+#   tasks:
+#     - name: install qemu guest agent
+#       package:
+#         name: qemu-guest-agent
+#         state: present
+
+#     - name: enable and start agent
+#       service:
+#         name: qemu-guest-agent
+#         enabled: yes
+#         state: started
+
 - hosts: all
   become: true
   tasks:
-    - name: install qemu guest agent
-      package:
-        name: qemu-guest-agent
-        state: present
-
-    - name: enable and start agent
-      service:
-        name: qemu-guest-agent
-        enabled: yes
-        state: started
+    - name: Check sudo access
+      command: whoami
