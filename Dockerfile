@@ -1,19 +1,20 @@
-FROM python:3.11-alpine
+FROM python:3.11-slim
 
-# パッケージインストール
-RUN apk add --no-cache \
+# 必要なパッケージをインストール
+RUN apt-get update && apt-get install -y --no-install-recommends \
     openssh-client \
     git \
     gcc \
-    musl-dev \
+    build-essential \
     libffi-dev \
-    openssl-dev \
-    shadow  # useraddで必要
+    libssl-dev \
+    sudo \
+    && rm -rf /var/lib/apt/lists/*
 
-# ansible ユーザー作成
-RUN addgroup -g 1500 ansible && adduser -D -u 1500 -G ansible ansible
+# ansible ユーザー作成（UID/GID を 1500 に固定）
+RUN groupadd -g 1500 ansible && useradd -m -u 1500 -g ansible ansible
 
-# ansible ユーザーの .ssh ディレクトリ準備
+# .ssh ディレクトリ準備
 RUN mkdir -p /home/ansible/.ssh && \
     chown -R ansible:ansible /home/ansible/.ssh && \
     chmod 700 /home/ansible/.ssh
@@ -24,7 +25,8 @@ RUN pip install --no-cache-dir ansible
 # 作業ディレクトリ
 WORKDIR /ansible
 
-# ユーザー切替（ここは任意。commandで上書き可能）
+# ユーザー切り替え
 USER ansible
 
+# デフォルトコマンド
 CMD ["ansible", "--version"]
