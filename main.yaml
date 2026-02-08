@@ -1,4 +1,4 @@
-- hosts: all
+- hosts: [kubernetes, worker-rhel, worker-ubuntu, nfs-server]
   become: true
   tasks:
     - name: install qemu guest agent
