@@ -1,4 +1,4 @@
-- hosts: [kubernetes, worker-rhel, worker-ubuntu, nfs-server]
+- hosts: [kubernetes, worker-rhel, worker-ubuntu, nfs-server, test-server]
   become: true
   tasks:
     # メモリキャッシュを破棄するタスク
