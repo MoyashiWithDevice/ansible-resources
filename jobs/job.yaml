@@ -1,11 +1,12 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: ansible-setup-job
+  generateName: ansible-setup-job-
   namespace: flux-system
   labels:
     build-id: "20260125-01-01"
 spec:
+  ttlSecondsAfterFinished: 300
   template:
     spec:
       serviceAccountName: ansible-sa
