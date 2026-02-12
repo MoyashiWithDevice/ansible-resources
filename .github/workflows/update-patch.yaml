@@ -2,24 +2,20 @@ name: Update Ansible Patch
 
 on:
   push:
+    branches: [main]
     paths:
-      - 'main.yaml'
-      - 'inventory.ini'
-      - '.github/workflows/**'
-    branches:
-      - main
+      - main.yaml
 
 jobs:
   update-patch:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Generate patch.yaml with new build-id
+      - name: Generate Patch
         run: |
-          mkdir -p jobs
-          BUILD_ID=$(date +%Y%m%d-%H%M%S)
+          TIMESTAMP=$(date +'%Y%m%d-%H-%M')
           cat <<EOF > jobs/patch.yaml
 apiVersion: batch/v1
 kind: Job
@@ -27,13 +23,13 @@ metadata:
   name: ansible-setup-job
   namespace: flux-system
   labels:
-    build-id: "$BUILD_ID"
+    build-id: "$TIMESTAMP"
 EOF
 
-      - name: Commit and push patch.yaml
+      - name: Commit and Push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add jobs/patch.yaml
-          git commit -m "Auto-update patch.yaml with build-id"
-          git push
+          git commit -m "Update patch.yaml with build-id $TIMESTAMP" || echo "No changes to commit"
+          git push origin main
