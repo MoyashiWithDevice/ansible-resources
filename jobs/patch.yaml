@@ -1,0 +1,7 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ansible-setup-job
+  namespace: flux-system
+  labels:
+    build-id: "20260212-03-23"
