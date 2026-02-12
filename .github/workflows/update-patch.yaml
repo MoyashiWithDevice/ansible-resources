@@ -16,15 +16,13 @@ jobs:
       - name: Generate Patch
         run: |
           TIMESTAMP=$(date +'%Y%m%d-%H-%M')
-          cat <<EOF > jobs/patch.yaml
-apiVersion: batch/v1
-kind: Job
-metadata:
-  name: ansible-setup-job
-  namespace: flux-system
-  labels:
-    build-id: "$TIMESTAMP"
-EOF
+          echo "apiVersion: batch/v1" > jobs/patch.yaml
+          echo "kind: Job" >> jobs/patch.yaml
+          echo "metadata:" >> jobs/patch.yaml
+          echo "  name: ansible-setup-job" >> jobs/patch.yaml
+          echo "  namespace: flux-system" >> jobs/patch.yaml
+          echo "  labels:" >> jobs/patch.yaml
+          echo "    build-id: \"$TIMESTAMP\"" >> jobs/patch.yaml
 
       - name: Commit and Push
         run: |
