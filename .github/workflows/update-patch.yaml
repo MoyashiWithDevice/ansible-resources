@@ -23,6 +23,11 @@ jobs:
           echo "  namespace: flux-system" >> jobs/patch.yaml
           echo "  labels:" >> jobs/patch.yaml
           echo "    build-id: \"$TIMESTAMP\"" >> jobs/patch.yaml
+          echo "spec:" >> jobs/patch.yaml
+          echo "  template:" >> jobs/patch.yaml
+          echo "    metadata:" >> jobs/patch.yaml
+          echo "      labels:" >> jobs/patch.yaml
+          echo "        build-id: \"$TIMESTAMP\"" >> jobs/patch.yaml
 
       - name: Push changes
         run: |
