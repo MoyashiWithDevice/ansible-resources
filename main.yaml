@@ -7,4 +7,3 @@
 
     - name: clear memory cache (PageCache, dentries, and inodes)
       shell: echo 3 > /proc/sys/vm/drop_caches
-      
