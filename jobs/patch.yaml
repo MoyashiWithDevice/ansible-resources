@@ -4,9 +4,9 @@ metadata:
   name: ansible-setup-job
   namespace: flux-system
   labels:
-    build-id: "20260212-12-00"
+    build-id: "20260212-03-34"
 spec:
   template:
     metadata:
       labels:
-        build-id: "20260212-12-00"
+        build-id: "20260212-03-34"
