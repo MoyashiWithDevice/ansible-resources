@@ -4,7 +4,7 @@ metadata:
   generateName: ansible-setup-job-
   namespace: flux-system
   labels:
-    build-id: "20260125-01-01"
+    build-id: placeholder
 spec:
   ttlSecondsAfterFinished: 300
   template:
