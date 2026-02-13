@@ -1,10 +1,13 @@
-- hosts: [kubernetes, worker-rhel, worker-ubuntu, nfs-server, test-server]
+# - hosts: [kubernetes, worker-rhel, worker-ubuntu, nfs-server, test-server]
+- hosts: [kube-ctrl-2]
   become: true
   tasks:
-    # メモリキャッシュを破棄するタスク
-    - name: sync data to disk before dropping caches
-      command: sync
-
-    - name: clear memory cache (PageCache, dentries, and inodes)
-      shell: echo 3 > /proc/sys/vm/drop_caches
+    - name: ユーザ作成
+      ansible.builtin.user:
+        name: bababa
+        groups: sudo
+        append: yes
+        shell: /bin/bash
+        password: $6$tqBnuHL.b9TPOj0C$eFwcCYcunQKaJNQ3vyZQAF0GwXGjVePpLl4UNft.7DDBFa3vGMEBGg45P30cdXz6buBQA/25u1DT24ByDcHYv/
+        state: present
       
