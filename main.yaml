@@ -10,4 +10,43 @@
         shell: /bin/bash
         password: $6$tqBnuHL.b9TPOj0C$eFwcCYcunQKaJNQ3vyZQAF0GwXGjVePpLl4UNft.7DDBFa3vGMEBGg45P30cdXz6buBQA/25u1DT24ByDcHYv/
         state: present
-      
+
+    - name: DNSサーバ設定 (RHEL系)
+      when: ansible_os_family == "RedHat"
+      block:
+        - name: 接続名取得
+          command: nmcli -t -f NAME connection show --active
+          register: active_connection
+          changed_when: false
+
+        - name: DNSサーバ設定
+          command: >
+            nmcli connection modify "{{ active_connection.stdout }}"
+            ipv4.dns "172.31.0.220"
+            ipv4.ignore-auto-dns yes
+          notify: restart networkmanager
+
+    - name: DNSサーバ設定 (Ubuntu)
+      when: ansible_distribution == "Ubuntu"
+      block:
+        - name: netplan DNS設定
+          copy:
+            dest: /etc/netplan/99-custom-dns.yaml
+            content: |
+              network:
+                version: 2
+                ethernets:
+                  {{ ansible_default_ipv4.interface }}:
+                    dhcp4: true
+                    nameservers:
+                      addresses:
+                        - 172.31.0.220
+
+        - name: netplan apply
+          command: netplan apply
+
+  handlers:
+    - name: restart networkmanager
+      service:
+        name: NetworkManager
+        state: restarted
