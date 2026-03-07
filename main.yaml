@@ -1,6 +1,11 @@
-# - hosts: [kubernetes, worker-rhel, worker-ubuntu, nfs-server, test-server]
-- hosts: [kube-ctrl-2]
+- hosts: [kubernetes, worker-rhel, worker-ubuntu, nfs-server]
   become: true
+
+  vars:
+    nfs_package:
+      Debian: "nfs-common"
+      RedHat: "nfs-utils"
+
   tasks:
     - name: ユーザ作成
       ansible.builtin.user:
@@ -44,9 +49,29 @@
 
         - name: netplan apply
           command: netplan apply
+    
+    # NFSクライアントをインストール && 起動する 
+    - name: NFSクライアントパッケージのインストール
+      package:
+        name: "{{ nfs_package[ansible_os_family] }}"
+        state: present
+
+    - name: 有効化 && スタート
+      service:
+        name: rpcbind
+        state: started
+        enabled: yes
+
+    - name: Redhat系で有効化 && スタート
+      service:
+        name: nfs-utils
+        state: started
+        enabled: yes
+      when: ansible_os_family == "RedHat"
+
 
   handlers:
-    - name: restart networkmanager
+    - name: networkmanagerを再起動して設定を反映
       service:
         name: NetworkManager
         state: restarted
