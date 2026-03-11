@@ -10,7 +10,7 @@
     - name: ユーザ作成
       ansible.builtin.user:
         name: bababa
-        groups: sudo
+        groups: "{{ 'sudo' if ansible_os_family == 'Debian' else 'wheel' }}"
         append: yes
         shell: /bin/bash
         password: $6$tqBnuHL.b9TPOj0C$eFwcCYcunQKaJNQ3vyZQAF0GwXGjVePpLl4UNft.7DDBFa3vGMEBGg45P30cdXz6buBQA/25u1DT24ByDcHYv/
